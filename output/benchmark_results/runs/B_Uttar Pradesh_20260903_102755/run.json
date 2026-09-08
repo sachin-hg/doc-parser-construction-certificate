@@ -1,0 +1,11 @@
+{
+  "run_id": "B_Uttar Pradesh_20260903_102755",
+  "variant": "B",
+  "state": "Uttar Pradesh",
+  "mode": "async",
+  "prompt_version": "v4",
+  "created_at": "2026-09-03 10:27:56",
+  "chunks": [],
+  "skipped_results": [],
+  "results_path": "results.jsonl"
+}

@@ -1,0 +1,35 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Environment — never commit credentials
+.env
+
+# Documents — PDFs are large binary assets (2.7 GB); use scripts/download_docs.py
+documents/
+
+# Markdown extractions — pipeline inputs, regenerate with scripts/extract_text_pdfs.py
+output/extracted_md/
+output/extracted_docling/
+output/extracted_marker/
+
+# Process logs inside run dirs
+process.log
+
+# Node
+viewer/node_modules/
+viewer/dist/
+
+# macOS
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Claude Code local settings
+.claude/settings.local.json

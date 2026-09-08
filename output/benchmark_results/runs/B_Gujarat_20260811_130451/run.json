@@ -1,0 +1,10 @@
+{
+  "run_id": "B_Gujarat_20260811_130451",
+  "variant": "B",
+  "state": "Gujarat",
+  "mode": "async",
+  "created_at": "2026-08-11 13:04:53",
+  "chunks": [],
+  "skipped_results": [],
+  "results_path": "results.jsonl"
+}

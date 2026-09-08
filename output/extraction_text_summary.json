@@ -1,0 +1,44 @@
+{
+  "total_docs": 1245,
+  "extracted": 1245,
+  "errors": 0,
+  "workers": 8,
+  "wall_time_s": 514.6,
+  "time_avg_s": 3.2924,
+  "time_median_s": 2.3466,
+  "time_p95_s": 9.3872,
+  "time_max_s": 23.9934,
+  "time_total_s": 4099.0,
+  "cpu_avg_s": 2.2682,
+  "mem_peak_rss_mb": 332.12,
+  "mem_avg_rss_mb": 93.11,
+  "md_chars_avg": 8573.0,
+  "md_chars_median": 7132,
+  "by_state": {
+    "GJ": {
+      "count": 593,
+      "avg_s": 5.4339,
+      "total_s": 3222.3
+    },
+    "HR": {
+      "count": 20,
+      "avg_s": 2.3807,
+      "total_s": 47.61
+    },
+    "MH": {
+      "count": 573,
+      "avg_s": 1.24,
+      "total_s": 710.55
+    },
+    "TS": {
+      "count": 18,
+      "avg_s": 0.8541,
+      "total_s": 15.37
+    },
+    "UP": {
+      "count": 41,
+      "avg_s": 2.5173,
+      "total_s": 103.21
+    }
+  }
+}

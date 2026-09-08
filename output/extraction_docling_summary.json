@@ -1,0 +1,38 @@
+{
+  "tool": "docling",
+  "sample_size": 60,
+  "total_text_pdfs": 1245,
+  "projected_total_h": 6.2,
+  "time_avg_s": 17.86,
+  "time_median_s": 12.51,
+  "time_max_s": 76.13,
+  "time_total_s": 1071.7,
+  "cpu_avg_s": 16.79,
+  "mem_peak_rss_mb": 833.55,
+  "mem_avg_rss_mb": 389.68,
+  "md_chars_avg": 29086.0,
+  "md_chars_median": 15078.0,
+  "errors": 0,
+  "by_state": {
+    "GJ": {
+      "count": 12,
+      "avg_s": 18.17
+    },
+    "HR": {
+      "count": 12,
+      "avg_s": 31.31
+    },
+    "MH": {
+      "count": 12,
+      "avg_s": 6.06
+    },
+    "TS": {
+      "count": 12,
+      "avg_s": 14.87
+    },
+    "UP": {
+      "count": 12,
+      "avg_s": 18.89
+    }
+  }
+}

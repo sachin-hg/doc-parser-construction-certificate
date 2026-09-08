@@ -1,0 +1,10 @@
+{
+  "run_id": "B_Maharashtra_20260811_132521",
+  "variant": "B",
+  "state": "Maharashtra",
+  "mode": "async",
+  "created_at": "2026-08-11 13:25:22",
+  "chunks": [],
+  "skipped_results": [],
+  "results_path": "results.jsonl"
+}

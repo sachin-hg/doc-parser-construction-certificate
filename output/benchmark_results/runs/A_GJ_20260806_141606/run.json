@@ -1,0 +1,10 @@
+{
+  "run_id": "A_GJ_20260806_141606",
+  "variant": "A",
+  "state": "GJ",
+  "mode": "async",
+  "created_at": "2026-08-06 14:16:06",
+  "chunks": [],
+  "skipped_results": [],
+  "results_path": "results.jsonl"
+}

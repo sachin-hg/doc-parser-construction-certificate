@@ -1,0 +1,10 @@
+{
+  "run_id": "B_Haryana_20260812_112911",
+  "variant": "B",
+  "state": "Haryana",
+  "mode": "async",
+  "created_at": "2026-08-12 11:29:12",
+  "chunks": [],
+  "skipped_results": [],
+  "results_path": "results.jsonl"
+}
