@@ -49,7 +49,7 @@ FILES_DIR       = ROOT / "documents"
 VALIDATION_PATH = ROOT / "output" / "validation_results.json"
 RUN_DIR         = ROOT / "output" / "benchmark_results" / "runs"
 SCRIPT_PATH     = ROOT / "scripts" / "benchmark.py"
-PORT = 8765
+PORT = int(os.environ.get("PORT", 8765))
 
 
 def _build_docs():
