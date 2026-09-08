@@ -4,15 +4,22 @@
 
 ## View existing results (no credentials needed)
 
-The repo includes 780 PDFs and all benchmark run results. To browse everything locally:
-
-**Prerequisites:** Python 3.9+ and Node.js 18+
+The repo includes 780 PDFs and all benchmark run results. To browse everything locally on a fresh Mac:
 
 ```bash
-git clone <repo-url>
-cd doc-parser-construction-certificate
+# 1. Homebrew (skip if already installed)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# Install Python and Node deps (no .env needed for view-only)
+# 2. Python and Node
+brew install python@3.12 node@20
+echo 'export PATH="/opt/homebrew/opt/node@20/bin:$PATH"' >> ~/.zprofile
+export PATH="/opt/homebrew/opt/node@20/bin:$PATH"
+
+# 3. Clone and set up
+git clone https://github.com/sachin-hg/doc-parser-construction-certificate
+cd doc-parser-construction-certificate
 bash scripts/install.sh
 
 # Terminal 1 — viewer
