@@ -1,0 +1,43 @@
+
+
+# **Table A**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+|Description of INCENTIVE ( FREE SALE S.no. REHAB BUILDING Task/Activity BUILDING)|Col2|Col3|Col4|Col5|Col6|Col7|
+|---|---|---|---|---|---|---|
+|  **WING A** **(ADORA)** **WING** **(BENECIA)** **WING C** **(CLARISA)** **WING D** **(DELLA)**|  **WING A** **(ADORA)** **WING** **(BENECIA)** **WING C** **(CLARISA)** **WING D** **(DELLA)**|  **WING A** **(ADORA)** **WING** **(BENECIA)** **WING C** **(CLARISA)** **WING D** **(DELLA)**|  **WING A** **(ADORA)** **WING** **(BENECIA)** **WING C** **(CLARISA)** **WING D** **(DELLA)**|  **WING A** **(ADORA)** **WING** **(BENECIA)** **WING C** **(CLARISA)** **WING D** **(DELLA)**|  **WING A** **(ADORA)** **WING** **(BENECIA)** **WING C** **(CLARISA)** **WING D** **(DELLA)**|  **WING A** **(ADORA)** **WING** **(BENECIA)** **WING C** **(CLARISA)** **WING D** **(DELLA)**|
+|1 Excavation. 100.00%|1 Excavation. 100.00%|1 Excavation. 100.00%|1 Excavation. 100.00%|100.00% 100.00% 100.00%|100.00% 100.00% 100.00%|100.00% 100.00% 100.00%|
+|2 Nos. of basement and plinth. 100.00%|2 Nos. of basement and plinth. 100.00%|2 Nos. of basement and plinth. 100.00%|2 Nos. of basement and plinth. 100.00%|100.00% 100.00% 100.00%|100.00% 100.00% 100.00%|100.00% 100.00% 100.00%|
+|3 Nos. of podium. 100.00% 100.00% 100.00% 100.00%|3 Nos. of podium. 100.00% 100.00% 100.00% 100.00%|3 Nos. of podium. 100.00% 100.00% 100.00% 100.00%|3 Nos. of podium. 100.00% 100.00% 100.00% 100.00%|3 Nos. of podium. 100.00% 100.00% 100.00% 100.00%|3 Nos. of podium. 100.00% 100.00% 100.00% 100.00%|3 Nos. of podium. 100.00% 100.00% 100.00% 100.00%|
+|4 Stilt floor. 100.00%|4 Stilt floor. 100.00%|4 Stilt floor. 100.00%|4 Stilt floor. 100.00%|100.00% 90.00% 90.00%|100.00% 90.00% 90.00%|100.00% 90.00% 90.00%|
+|5 Nos. of slabs of super structure. 100.00%|5 Nos. of slabs of super structure. 100.00%|5 Nos. of slabs of super structure. 100.00%|5 Nos. of slabs of super structure. 100.00%|100.00% 100.00% 100.00%|100.00% 100.00% 100.00%|100.00% 100.00% 100.00%|
+|6 Internal walls, Internal plaster, Floorings within flats, Doors& Windows in each flat. 78.00% 80.00% 71.00% 72.00%|6 Internal walls, Internal plaster, Floorings within flats, Doors& Windows in each flat. 78.00% 80.00% 71.00% 72.00%|6 Internal walls, Internal plaster, Floorings within flats, Doors& Windows in each flat. 78.00% 80.00% 71.00% 72.00%|6 Internal walls, Internal plaster, Floorings within flats, Doors& Windows in each flat. 78.00% 80.00% 71.00% 72.00%|6 Internal walls, Internal plaster, Floorings within flats, Doors& Windows in each flat. 78.00% 80.00% 71.00% 72.00%|6 Internal walls, Internal plaster, Floorings within flats, Doors& Windows in each flat. 78.00% 80.00% 71.00% 72.00%|6 Internal walls, Internal plaster, Floorings within flats, Doors& Windows in each flat. 78.00% 80.00% 71.00% 72.00%|
+|7 Sanitary fittings within the flats, Electrical Fittings within the flats. 40.00% 42.00% 37.00% 38.00%|7 Sanitary fittings within the flats, Electrical Fittings within the flats. 40.00% 42.00% 37.00% 38.00%|7 Sanitary fittings within the flats, Electrical Fittings within the flats. 40.00% 42.00% 37.00% 38.00%|7 Sanitary fittings within the flats, Electrical Fittings within the flats. 40.00% 42.00% 37.00% 38.00%|7 Sanitary fittings within the flats, Electrical Fittings within the flats. 40.00% 42.00% 37.00% 38.00%|7 Sanitary fittings within the flats, Electrical Fittings within the flats. 40.00% 42.00% 37.00% 38.00%|7 Sanitary fittings within the flats, Electrical Fittings within the flats. 40.00% 42.00% 37.00% 38.00%|
+|8 Staircase, lift wells & lobbies at each floor level connecting staircases and lifts, OH& UG tank. 66.00%  67.00% 59.00% 60.00%|8 Staircase, lift wells & lobbies at each floor level connecting staircases and lifts, OH& UG tank. 66.00%  67.00% 59.00% 60.00%|8 Staircase, lift wells & lobbies at each floor level connecting staircases and lifts, OH& UG tank. 66.00%  67.00% 59.00% 60.00%|8 Staircase, lift wells & lobbies at each floor level connecting staircases and lifts, OH& UG tank. 66.00%  67.00% 59.00% 60.00%|8 Staircase, lift wells & lobbies at each floor level connecting staircases and lifts, OH& UG tank. 66.00%  67.00% 59.00% 60.00%|8 Staircase, lift wells & lobbies at each floor level connecting staircases and lifts, OH& UG tank. 66.00%  67.00% 59.00% 60.00%|8 Staircase, lift wells & lobbies at each floor level connecting staircases and lifts, OH& UG tank. 66.00%  67.00% 59.00% 60.00%|
+|9 External plumbing and external plaster, elevation, completion of terraces with waterproofing of the building. 14.00% 21.00% 0.00% 0.00%|9 External plumbing and external plaster, elevation, completion of terraces with waterproofing of the building. 14.00% 21.00% 0.00% 0.00%|9 External plumbing and external plaster, elevation, completion of terraces with waterproofing of the building. 14.00% 21.00% 0.00% 0.00%|9 External plumbing and external plaster, elevation, completion of terraces with waterproofing of the building. 14.00% 21.00% 0.00% 0.00%|9 External plumbing and external plaster, elevation, completion of terraces with waterproofing of the building. 14.00% 21.00% 0.00% 0.00%|9 External plumbing and external plaster, elevation, completion of terraces with waterproofing of the building. 14.00% 21.00% 0.00% 0.00%|9 External plumbing and external plaster, elevation, completion of terraces with waterproofing of the building. 14.00% 21.00% 0.00% 0.00%|
+|10 Installation of lifts, water pumps, firefighting fittings & equipment as per CFO NOC, electrical fittings to common areas, electro, mechanical equipment, Compliance top conditions of environment/CRZ NOC, Finishing to entrance lobby, plinth protection, paving of areas appurtenant to building, compound wall and all other requirements as may be required to obtain occupation/completion certificate. 14.00% 21.00% 0.00% 0.00% |10 Installation of lifts, water pumps, firefighting fittings & equipment as per CFO NOC, electrical fittings to common areas, electro, mechanical equipment, Compliance top conditions of environment/CRZ NOC, Finishing to entrance lobby, plinth protection, paving of areas appurtenant to building, compound wall and all other requirements as may be required to obtain occupation/completion certificate. 14.00% 21.00% 0.00% 0.00% |10 Installation of lifts, water pumps, firefighting fittings & equipment as per CFO NOC, electrical fittings to common areas, electro, mechanical equipment, Compliance top conditions of environment/CRZ NOC, Finishing to entrance lobby, plinth protection, paving of areas appurtenant to building, compound wall and all other requirements as may be required to obtain occupation/completion certificate. 14.00% 21.00% 0.00% 0.00% |10 Installation of lifts, water pumps, firefighting fittings & equipment as per CFO NOC, electrical fittings to common areas, electro, mechanical equipment, Compliance top conditions of environment/CRZ NOC, Finishing to entrance lobby, plinth protection, paving of areas appurtenant to building, compound wall and all other requirements as may be required to obtain occupation/completion certificate. 14.00% 21.00% 0.00% 0.00% |10 Installation of lifts, water pumps, firefighting fittings & equipment as per CFO NOC, electrical fittings to common areas, electro, mechanical equipment, Compliance top conditions of environment/CRZ NOC, Finishing to entrance lobby, plinth protection, paving of areas appurtenant to building, compound wall and all other requirements as may be required to obtain occupation/completion certificate. 14.00% 21.00% 0.00% 0.00% |10 Installation of lifts, water pumps, firefighting fittings & equipment as per CFO NOC, electrical fittings to common areas, electro, mechanical equipment, Compliance top conditions of environment/CRZ NOC, Finishing to entrance lobby, plinth protection, paving of areas appurtenant to building, compound wall and all other requirements as may be required to obtain occupation/completion certificate. 14.00% 21.00% 0.00% 0.00% |10 Installation of lifts, water pumps, firefighting fittings & equipment as per CFO NOC, electrical fittings to common areas, electro, mechanical equipment, Compliance top conditions of environment/CRZ NOC, Finishing to entrance lobby, plinth protection, paving of areas appurtenant to building, compound wall and all other requirements as may be required to obtain occupation/completion certificate. 14.00% 21.00% 0.00% 0.00% |
+|**11**|**Overall Percentage of** **completion of the work** **done for the entire building.**|71.00|72.00%|72.00%|74.00%|67.00%|
+
+
+
+
+
+
+> **[Page 3: scanned image — not extractable via text layer]**
+

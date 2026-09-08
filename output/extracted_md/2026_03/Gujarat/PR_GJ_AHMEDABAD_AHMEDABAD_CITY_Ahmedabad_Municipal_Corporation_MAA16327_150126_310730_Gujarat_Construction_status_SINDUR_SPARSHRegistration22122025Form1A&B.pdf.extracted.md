@@ -1,0 +1,87 @@
+|Table – A|Col2|Col3|Col4|Col5|
+|---|---|---|---|---|
+|**A**|**A**|**A**|**A**|**A**|
+|**Sr.** **No**|**Tasks/Number**|**Percentage of work** **done**|**Activity Start Date**|**Activity Completion** **Date**|
+|1|Excavation|100|30-05-2025|31-10-2025|
+|2|1 number of Basement(s) and Plinth (No. & %)|10|01-11-2025|28-02-2026|
+|3|0 number of Podiums (No. & %)|0|NA|NA|
+|4|Stilt Floor (%)|0|NA|NA|
+|5|8 number of Slabs of Super Structure (No. & %)|0|01-03-2026|31-12-2027|
+|6|Internal & External walls, Internal Plaster, Floorings within Flats/Premises, Doors and Windows to each of the Flat/Premises (%)|0|01-11-2026|31-05-2028|
+|7|Sanitary Fittings & color work within the Flat/Premises (%)|0|01-01-2030|31-03-2030|
+|8|Staircases Lifts Wells, Ramp and Lobbies at each Floor level connecting Staircases and Lifts, Overhead and Underground Water Tanks (%)|0|01-03-2026|30-06-2028|
+|9|The external plumbing and external plaster elevation, external color, drainage work, completion of terraces with waterproofing of the Building/Wing (%)|0|01-01-2027|31-03-2029|
+|10|Installation of lifts water pumps, Fire Fighting Fittings and Equipment as per CFO NOC, Electrical fittings to Common Areas electro mechanical equipment, compliance to conditions of environment/CRZ NOC, finishing to entrance lobby/s plinth protection, paving of areas appurtenant to Building/Wing, Compound Wall and all other requirements as may be required to Obtain Occupation/Completion Certificate (%)|0|01-01-2029|31-12-2029|
+
+
+
+
+
+
+drainage work, completion of terraces with waterproofing of the
+Building/Wing (%)
+10
+Installation of lifts water pumps, Fire Fighting Fittings and Equipment
+as per CFO NOC, Electrical fittings to Common Areas electro
+mechanical equipment, compliance to conditions of environment/CRZ
+NOC, finishing to entrance lobby/s plinth protection, paving of areas
+appurtenant to Building/Wing, Compound Wall and all other
+requirements as may be required to Obtain Occupation/Completion
+Certificate (%)
+Table - B
+Internal & External Development Works in Respect of the entire Registered Phase
+
+|Sr. No.|Common areas and Facilities Amenities|Proposed(Yes/ No)|Percentage of work done|Remarks|Activity Start Date|Activity Completion Date|
+|---|---|---|---|---|---|---|
+|1|Internal Roads & Footpaths|YES|0||01-01-2030|30-04-2030|
+|2|Water Supplys|YES|0||01-01-2030|30-04-2030|
+|3|Sewerage (chamber, lines, Septic Tank, STP)|YES|0||01-01-2030|30-04-2030|
+|4|Storm Water Drains|YES|0||01-01-2030|30-04-2030|
+|5|Landscaping & Tree Planting|YES|0||01-01-2030|30-04-2030|
+|6|Street Lighting|YES|0||01-01-2030|30-04-2030|
+|7|Community Buildings|NO|0|NA|NA|NA|
+|8|Treatment and disposal of sewage and sullage water /STP|NO|0|NA|NA|NA|
+|9|Solid Waste Management & Disposal|YES|0||01-01-2030|30-04-2030|
+|10|Water Conservation,Rain Water Harvesting,Percolating Well/Pit .|YES|0||01-01-2030|30-04-2030|
+|11|Energy Management|NO|0|NA|NA|NA|
+|12|Fire Protection and Fire Safety Requirements|YES|0||01-01-2030|30-04-2030|
+|13|Electrical Meter Room, Sub- station,Receiving Station.|YES|0||01-01-2030|30-04-2030|
+|14|Fire fighting facilities|YES|0||01-01-2030|30-04-2030|
+|15|Drinking water facilities|YES|0||01-04-2030|30-04-2030|
+|16|Emergency evacuation services|NO|0|NA|NA|NA|
+|17|Use of renewable energy|YES|0||01-04-2030|30-04-2030|
+|18|Security using CCTV surveillance|YES|0||01-04-2030|30-04-2030|
+|19|Letter Box|YES|0||01-04-2030|30-04-2030|
+
+
+
+
+
+
+
+
+
+
+
+|Table –C|Col2|Col3|Col4|Col5|
+|---|---|---|---|---|
+|**Details regarding Garage and Parking in respect of the entire registered phase**|**Details regarding Garage and Parking in respect of the entire registered phase**|**Details regarding Garage and Parking in respect of the entire registered phase**|**Details regarding Garage and Parking in respect of the entire registered phase**|**Details regarding Garage and Parking in respect of the entire registered phase**|
+|**Sr.** **No.**|**Details**|**Proposed Total** **Number**|**Total Area(Sq** **Mtrs)**|**Percentage of work done**|
+|1|Garage|0|0.0|0|
+|2|Covered Parking|102|1205.39|0|
+|3|Open Parking|0|0|0|
+
+
+|Yours Faithfully,|Col2|
+|---|---|
+|Name of Architect|**JIKEN SURESHKUMAR MEVADA**|
+|Council of Architects(CoA) Registration No.|**CA/2017/86584**|
+|Council of Architects(CoA) Registration valid till|**31-Dec-2028**|
+|Date of physical visit to the site|**22-Dec-2025**|
+|Firm Name|**S MEVADA ARCHITECT**|
+|Remark|**--**|
+
+
+@This is online submitted document with due eKYC done, hence no physical signature required.
+
+
