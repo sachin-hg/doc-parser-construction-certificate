@@ -22,10 +22,10 @@ git clone https://github.com/sachin-hg/doc-parser-construction-certificate
 cd doc-parser-construction-certificate
 bash scripts/install.sh
 
-# Terminal 1 — viewer
+# Terminal 1 — viewer (default port 5173, override with VITE_PORT=XXXX)
 cd viewer && npm run dev
 
-# Terminal 2 — API server (run from project root)
+# Terminal 2 — API server from project root (default port 8765, override with PORT=XXXX)
 .venv/bin/python viewer_server.py
 ```
 
@@ -153,6 +153,18 @@ cd viewer && npm run dev    # http://localhost:5173
 ```
 
 The Vite dev server proxies all `/api` requests to port 8765 automatically.
+
+### Override ports
+
+If the default ports are already in use, override them with env vars:
+
+```bash
+# API server on a different port
+PORT=8766 .venv/bin/python viewer_server.py
+
+# Viewer on a different port, pointing at the API on 8766
+cd viewer && VITE_PORT=5174 VITE_API_PORT=8766 npx vite
+```
 
 ---
 
