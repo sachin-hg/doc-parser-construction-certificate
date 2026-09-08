@@ -1,47 +1,48 @@
 # Setup & Server
 
-## Quick start (new machine after `git clone`)
+---
+
+## View existing results (no credentials needed)
+
+The repo includes 780 PDFs and all benchmark run results. To browse everything locally:
+
+**Prerequisites:** Python 3.9+ and Node.js 18+
 
 ```bash
-bash scripts/install.sh            # create venv, install deps, generate .env template
-# Edit .env with your credentials (see §Credentials below)
-gcloud auth application-default login   # if using Vertex AI / Gemini
-.venv/bin/python scripts/download_docs.py   # download PDFs for all benchmark runs (~2.4 GB)
+git clone <repo-url>
+cd doc-parser-construction-certificate
 
-# Terminal 1 — viewer dev server
-cd viewer && npm run dev            # http://localhost:5173
+# Install Python and Node deps (no .env needed for view-only)
+bash scripts/install.sh
+
+# Terminal 1 — viewer
+cd viewer && npm run dev
 
 # Terminal 2 — API server (run from project root)
 .venv/bin/python viewer_server.py
 ```
 
-Open **http://localhost:5173** — all existing run results and PDFs will be visible.
+Open **http://localhost:5173** — all benchmark runs, extracted JSON, and source PDFs are available immediately.
 
 ---
 
-## Prerequisites
+## Full setup (to run new benchmarks)
+
+### Prerequisites
 
 - Python 3.9+
-- Node.js 18+ with npm
+- Node.js 18+
 - Google Cloud CLI (`gcloud`) — only needed for Vertex AI / batch mode
 
----
-
-## 1. Install dependencies
+### 1. Install dependencies
 
 ```bash
 bash scripts/install.sh
 ```
 
-This script:
-- Creates `.venv/` with the first Python 3.9+ found on your `PATH`
-- Runs `pip install -r requirements.txt`
-- Runs `npm install` inside `viewer/`
-- Writes a `.env` template if one doesn't exist
+This script creates `.venv/`, installs `requirements.txt`, runs `npm install` inside `viewer/`, and writes a `.env` template.
 
----
-
-## 2. Credentials
+### 2. Credentials
 
 Edit the `.env` file created by `install.sh`:
 
@@ -64,21 +65,19 @@ GCS_BUCKET=rera-benchmark-pdfs
 # ── GLM-OCR via z.ai (variant E only) ───────────────────────────────────────
 # GLM_OCR_API_KEY=your-glm-ocr-key
 
-# ── OpenRouter / Qwen3-VL (variant F only) ───────────────────────────────────
+# ── OpenRouter / Qwen3-VL (variant F only) ──────────────────────────────────
 # OPENROUTER_API_KEY=your-openrouter-key
 ```
 
-### Minimum required
-
 | Goal | Required keys |
 |------|--------------|
-| View existing results only | none |
+| View existing results only | **none** |
 | Run variants A–D (Gemini) | `GEMINI_PROJECT` **or** `GEMINI_API_KEY` |
 | Run variant E (GLM-OCR + Luna) | `OPENAI_API_KEY` + `GLM_OCR_API_KEY` |
 | Run variant F (Qwen3-VL + Luna) | `OPENAI_API_KEY` + `OPENROUTER_API_KEY` |
 | Batch mode (any variant) | above + `GCS_BUCKET` |
 
-### How to get each key
+#### How to get each key
 
 **`GEMINI_PROJECT` (Vertex AI — recommended)**
 1. Create a GCP project at console.cloud.google.com
@@ -88,31 +87,25 @@ GCS_BUCKET=rera-benchmark-pdfs
 5. Set quota project: `gcloud auth application-default set-quota-project YOUR_PROJECT`
 
 **`GEMINI_API_KEY` (AI Studio — simpler)**
-1. Go to aistudio.google.com → API Keys
-2. Create a key and paste it as `GEMINI_API_KEY`
+1. Go to aistudio.google.com → API Keys → Create a key
 
 **`OPENAI_API_KEY`**
-1. Go to platform.openai.com → API Keys
-2. Create a new secret key
+1. Go to platform.openai.com → API Keys → Create a new secret key
 
 **`GLM_OCR_API_KEY`**
-1. Register at bigmodel.cn or z.ai
-2. Create an API key for the layout parsing endpoint
+1. Register at bigmodel.cn or z.ai → create an API key
 
 **`OPENROUTER_API_KEY`**
-1. Go to openrouter.ai → Keys
-2. Create a key (Qwen3-VL-32B is available free/cheap)
+1. Go to openrouter.ai → Keys → Create a key
 
----
-
-## 3. GCP authentication (Vertex AI only)
+### 3. GCP authentication (Vertex AI only)
 
 ```bash
 gcloud auth application-default login
 gcloud auth application-default set-quota-project your-gcp-project-id
 ```
 
-### GCS bucket (batch mode only)
+#### GCS bucket (batch mode only)
 
 ```bash
 gcloud storage buckets create gs://rera-benchmark-pdfs \
@@ -120,33 +113,25 @@ gcloud storage buckets create gs://rera-benchmark-pdfs \
   --location=us-central1
 ```
 
----
+### 4. Download additional PDFs (optional)
 
-## 4. Download PDFs
-
-The repository contains benchmark run results (JSON extractions) but not the original PDFs (2.4 GB).
-Download URLs for all documents are stored in `output/manifest.json`.
+The repo includes PDFs for all successfully extracted documents (780 files, 633 MB).
+To download the remaining ~1,600 docs that errored or were never run:
 
 ```bash
-# Download only docs referenced by existing benchmark runs (~2.4 GB)
-.venv/bin/python scripts/download_docs.py
-
-# Download everything in the manifest (~2.7 GB)
+# Download all docs not yet in the repo (~1.1 GB more)
 .venv/bin/python scripts/download_docs.py --all
 
 # Filter by state
-.venv/bin/python scripts/download_docs.py --state HR
+.venv/bin/python scripts/download_docs.py --state UP
 
-# See what would be downloaded without fetching
+# See what would be downloaded
 .venv/bin/python scripts/download_docs.py --dry-run
-
-# Parallel workers (default 5)
-.venv/bin/python scripts/download_docs.py --workers 10
 ```
 
 ---
 
-## 5. Start the viewer
+## Start the viewer
 
 **Terminal 1** — React dev server:
 
@@ -154,30 +139,13 @@ Download URLs for all documents are stored in `output/manifest.json`.
 cd viewer && npm run dev    # http://localhost:5173
 ```
 
-**Terminal 2** — API server (run from project root):
+**Terminal 2** — API server (must run from project root):
 
 ```bash
 .venv/bin/python viewer_server.py
 ```
 
 The Vite dev server proxies all `/api` requests to port 8765 automatically.
-
-> **Important**: always start `viewer_server.py` from the project root, not from inside `viewer/`.
-
----
-
-## 6. Re-generate markdown extractions (optional)
-
-The benchmark pipeline stores its raw JSON results in the run directories.
-Markdown extractions (`output/extracted_md/`) are only needed to re-run variant A or C (2-call approach).
-
-```bash
-# Extract text from PDFs (uses PyMuPDF)
-.venv/bin/python scripts/extract_text_pdfs.py
-
-# Extract with Docling (optional, higher quality but slower)
-.venv/bin/python scripts/extract_docling.py
-```
 
 ---
 
@@ -196,14 +164,14 @@ Markdown extractions (`output/extracted_md/`) are only needed to re-run variant 
 
 ### Variants
 
-| Variant | Model | Approach | PDF access |
-|---------|-------|----------|------------|
-| A | Gemini 2.5 Flash | 2-call: extract MD → JSON | via markdown |
-| B | Gemini 2.5 Flash | single-call: raw PDF → JSON | direct upload |
-| C | Gemini 2.5 Flash-Lite | 2-call | via markdown |
-| D | Gemini 2.5 Flash-Lite | single-call | direct upload |
-| E | GLM-OCR + GPT-5.6 Luna | 2-call | OCR → markdown → JSON |
-| F | Qwen3-VL-32B + GPT-5.6 Luna | 2-call | vision → markdown → JSON |
+| Variant | Model | Approach |
+|---------|-------|----------|
+| A | Gemini 2.5 Flash | 2-call: extract MD → JSON |
+| B | Gemini 2.5 Flash | single-call: raw PDF → JSON |
+| C | Gemini 2.5 Flash-Lite | 2-call |
+| D | Gemini 2.5 Flash-Lite | single-call |
+| E | GLM-OCR + GPT-5.6 Luna | 2-call |
+| F | Qwen3-VL-32B + GPT-5.6 Luna | 2-call |
 
 ### State codes
 
@@ -211,15 +179,26 @@ Markdown extractions (`output/extracted_md/`) are only needed to re-run variant 
 
 ---
 
-## What's in git / what's not
+## Re-generate markdown extractions (optional)
+
+Only needed to re-run variant A or C (2-call approach). Already present for 471 docs in git.
+
+```bash
+.venv/bin/python scripts/extract_text_pdfs.py    # PyMuPDF, fast
+.venv/bin/python scripts/extract_docling.py      # higher quality, slower
+```
+
+---
+
+## What's in git
 
 | Path | In git? | Notes |
 |------|---------|-------|
 | `scripts/`, `pipeline/`, `viewer/src/` | ✅ | All source code |
 | `output/benchmark_results/runs/` | ✅ | Run metadata + JSON extraction results |
-| `output/manifest.json` | ✅ | PDF download URLs |
-| `output/validation_results.json` | ✅ | Document metadata |
-| `documents/` | ❌ | PDFs — download with `scripts/download_docs.py` |
-| `output/extracted_md/` | ❌ | Markdown extractions — regenerate if needed |
+| `documents/` (780 files) | ✅ | PDFs for all successfully extracted docs |
+| `output/extracted_md/` (471 files) | ✅ | Markdown extractions for 2-call variants |
+| `output/manifest.json` | ✅ | Download URLs for all 3,087 docs |
 | `.env` | ❌ | Credentials — never committed |
 | `.venv/`, `viewer/node_modules/` | ❌ | Installed dependencies |
+| Remaining ~2,300 PDFs | ❌ | Download with `scripts/download_docs.py` |
