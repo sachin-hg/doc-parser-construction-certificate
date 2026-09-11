@@ -908,7 +908,7 @@ def _collect_vertex_gcs_batch_results(
     from google.cloud import storage as gcs_storage
     stripped    = output_gcs_prefix.removeprefix("gs://")
     bucket_name, _, prefix = stripped.partition("/")
-    gcs_client  = gcs_storage.Client()
+    gcs_client  = gcs_storage.Client(project=os.environ.get("GEMINI_PROJECT"))
     bucket_obj  = gcs_client.bucket(bucket_name)
 
     all_lines: list = []
