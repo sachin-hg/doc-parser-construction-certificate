@@ -147,13 +147,26 @@ def _get_ran_paths() -> set:
 def _run_status(manifest: dict, run_id: str, run_dir=None) -> str:
     """Derive a human-readable status from a run manifest."""
     if manifest.get("results_path"):
-        # Verify the results file actually has content — an empty file means the
-        # run crashed before writing anything (e.g. batch submission error).
         if run_dir is not None:
             rfile = run_dir / manifest["results_path"]
-            if rfile.exists() and rfile.stat().st_size == 0 and not manifest.get("chunks"):
-                return "failed"
-        return "complete"
+            if rfile.exists() and rfile.stat().st_size == 0:
+                chunks = manifest.get("chunks", [])
+                if not chunks:
+                    # Crashed before submitting any chunks — check if still alive.
+                    pid_file = run_dir / "pid"
+                    if pid_file.exists():
+                        try:
+                            pid = int(pid_file.read_text().strip())
+                            os.kill(pid, 0)
+                            return "running"
+                        except (ProcessLookupError, PermissionError, ValueError):
+                            pass
+                    return "failed"
+                # Has chunks but results not yet merged — fall through to chunk logic.
+            else:
+                return "complete"
+        else:
+            return "complete"
     mode = manifest.get("mode", "async")
     if mode == "async":
         proc_info = RUNNING_PROCS.get(run_id)
@@ -163,6 +176,17 @@ def _run_status(manifest: dict, run_id: str, run_dir=None) -> str:
     # batch mode
     chunks = manifest.get("chunks", [])
     if not chunks:
+        if run_dir is not None and (run_dir / "process.log").exists():
+            # Check if the process is still alive via the PID file.
+            pid_file = run_dir / "pid"
+            if pid_file.exists():
+                try:
+                    pid = int(pid_file.read_text().strip())
+                    os.kill(pid, 0)  # signal 0 = existence check only
+                    return "running"
+                except (ProcessLookupError, PermissionError, ValueError):
+                    pass
+            return "failed"
         return "pending"
     n_pending  = sum(1 for c in chunks if c["status"] == "pending")
     n_complete = sum(1 for c in chunks if c["status"] == "complete")
@@ -220,10 +244,11 @@ def _read_run_docs(run_dir: Path, manifest: dict) -> list:
         except Exception:
             pass
         # For a completed run the file has everything; return early.
-        if manifest.get("results_path"):
+        # Only skip chunk scanning if the file actually had content.
+        if manifest.get("results_path") and docs:
             return docs
-        # For an in-progress async run the file is partial — fall through to
-        # mark remaining docs as "running" below.
+        # For an in-progress async run (or a batch run whose results.jsonl is
+        # empty because chunks are still pending), fall through to scan chunks.
 
     # Partial run — read completed chunk files + scan pending job files
     for chunk in manifest.get("chunks", []):
@@ -562,13 +587,14 @@ class Handler(BaseHTTPRequestHandler):
             "log":               log,
             "docs":              docs,
             "stats": {
-                "total":        total,
-                "success":      n_success,
-                "error":        n_error,
-                "skipped":      n_skipped,
-                "pending":      n_pending,
-                "cost_total":   round(sum(costs), 6) if costs else None,
-                "avg_latency_s": round(sum(lats) / len(lats), 2) if lats else None,
+                "total":            total,
+                "success":          n_success,
+                "error":            n_error,
+                "skipped":          n_skipped,
+                "pending":          n_pending,
+                "cost_total":       round(sum(costs), 6) if costs else None,
+                "avg_latency_s":    round(sum(lats) / len(lats), 2) if lats else None,
+                "batch_elapsed_s":  manifest.get("batch_elapsed_s"),
             },
         })
 
@@ -672,6 +698,7 @@ class Handler(BaseHTTPRequestHandler):
                 stderr=subprocess.STDOUT,
                 cwd=str(ROOT),
             )
+            (run_dir / "pid").write_text(str(proc.pid))
             RUNNING_PROCS[run_id] = {"proc": proc, "log_path": str(log_path)}
             self._json(200, {"run_id": run_id})
         except Exception as e:

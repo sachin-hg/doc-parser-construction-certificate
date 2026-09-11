@@ -399,11 +399,12 @@ def _save_chunk_results(run_dir: Path, chunk_idx: int, results: list) -> str:
     return filename
 
 
-def _mark_run_complete(run_dir: Path, results_file: str) -> None:
+def _mark_run_complete(run_dir: Path, results_file: str, **extra) -> None:
     p = run_dir / "run.json"
     with open(p) as f:
         manifest = json.load(f)
     manifest["results_path"] = results_file
+    manifest.update(extra)
     with open(p, "w") as f:
         json.dump(manifest, f, indent=2)
 
@@ -922,8 +923,10 @@ def _collect_vertex_gcs_batch_results(
     results = list(skipped_results)
     for doc, entry in zip(active_docs, parsed):
         r = _base_result(doc, variant, model, call_type)
-        if "status" in entry:
-            r["error"] = entry["status"].get("message") or str(entry["status"])
+        status = entry.get("status")
+        if isinstance(status, dict) and status:
+            # Non-empty dict status means Vertex reported an error for this request.
+            r["error"] = status.get("message") or str(status)
         else:
             try:
                 _parse_vertex_gcs_response(entry.get("response", {}), r, model)
@@ -1430,6 +1433,7 @@ def submit_batch(
               f"(chunk_max={chunk_max}).", flush=True)
 
     # ── Submit ALL chunks simultaneously (they run in parallel on Gemini) ─────
+    submit_start = time.time()
     submitted = []   # (chunk_idx, job, chunk_docs, output_gcs_prefix_or_none)
     for chunk_idx, (chunk_reqs, chunk_docs) in enumerate(zip(chunks, doc_chunks), 1):
         suffix = f" (chunk {chunk_idx}/{n_chunks})" if n_chunks > 1 else ""
@@ -1494,7 +1498,14 @@ def submit_batch(
                 r["error"] = f"Gemini batch {job.state}: {err}"
                 all_results.append(r)
         else:
-            print(f"\n  Job complete{suffix}. Collecting results…", flush=True)
+            try:
+                elapsed = round((job.end_time - job.start_time).total_seconds())
+                elapsed_str = (f"Google: {job.start_time.strftime('%H:%M:%S')} → "
+                               f"{job.end_time.strftime('%H:%M:%S')} UTC, {elapsed/60:.1f} min")
+            except Exception:
+                elapsed = round(time.time() - submit_start)
+                elapsed_str = f"{elapsed/60:.1f} min (wall-clock fallback)"
+            print(f"\n  Job complete{suffix}. Collecting results… ({elapsed_str})", flush=True)
             if output_prefix:
                 chunk_results = _collect_vertex_gcs_batch_results(
                     output_prefix, chunk_docs, [], variant, model, call_type
@@ -1607,6 +1618,25 @@ def _fetch_one_chunk(
         err = getattr(job.error, "message", str(job.error)) if job.error else "unknown"
         raise RuntimeError(f"Gemini batch failed: {job.state} — {err}")
 
+    elapsed_s = None
+    try:
+        if job.start_time and job.end_time:
+            elapsed_s = round((job.end_time - job.start_time).total_seconds())
+            print(f"  Batch job took {elapsed_s/60:.1f} min "
+                  f"(Google: {job.start_time.strftime('%H:%M:%S')} → "
+                  f"{job.end_time.strftime('%H:%M:%S')} UTC)", flush=True)
+    except Exception:
+        pass
+
+    # Persist timing back to the chunk file so fetch_run can aggregate it.
+    if elapsed_s is not None:
+        try:
+            info["batch_elapsed_s"] = elapsed_s
+            with open(chunk_file, "w") as _cf:
+                json.dump(info, _cf, indent=2)
+        except Exception:
+            pass
+
     gcs_output_prefix = info.get("gcs_output_prefix")
     if gcs_output_prefix:
         return _collect_vertex_gcs_batch_results(
@@ -1685,6 +1715,7 @@ def fetch_run(run_id: str, poll_tries: int, poll_interval: int) -> None:
     skipped_results = manifest.get("skipped_results", [])
     all_results     = list(skipped_results)
 
+    elapsed_vals = []
     for chunk_info in sorted(manifest["chunks"], key=lambda c: c["idx"]):
         chunk_file = run_dir / chunk_info["results_file"]
         with open(chunk_file) as f:
@@ -1692,12 +1723,26 @@ def fetch_run(run_id: str, poll_tries: int, poll_interval: int) -> None:
                 line = line.strip()
                 if line:
                     all_results.append(json.loads(line))
+        # Read elapsed from the corresponding job file if available.
+        job_file = chunk_info.get("job_file")
+        if job_file:
+            try:
+                with open(run_dir / job_file) as jf:
+                    jdata = json.load(jf)
+                if jdata.get("batch_elapsed_s"):
+                    elapsed_vals.append(jdata["batch_elapsed_s"])
+            except Exception:
+                pass
 
     out_path = run_dir / "results.jsonl"
     with open(out_path, "w") as f:
         for r in all_results:
             f.write(json.dumps(r, default=str) + "\n")
-    _mark_run_complete(run_dir, "results.jsonl")
+
+    extra = {}
+    if elapsed_vals:
+        extra["batch_elapsed_s"] = max(elapsed_vals)  # wall-clock = slowest chunk
+    _mark_run_complete(run_dir, "results.jsonl", **extra)
 
     print_summary(all_results, "batch")
     print(f"Results → {out_path}")

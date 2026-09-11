@@ -731,6 +731,13 @@ function RunDetailPage({ runId, docs, onBack, onDocClick, onNavigate }) {
                   {stats.cost_total != null && (
                     <StatCell label="Cost" value={`$${stats.cost_total.toFixed(3)}`} />
                   )}
+                  {stats.batch_elapsed_s != null && (
+                    <StatCell label="Batch time" value={
+                      stats.batch_elapsed_s >= 60
+                        ? `${(stats.batch_elapsed_s / 60).toFixed(1)} min`
+                        : `${stats.batch_elapsed_s}s`
+                    } />
+                  )}
                   {stats.avg_latency_s != null && (
                     <StatCell label="Avg latency" value={`${stats.avg_latency_s}s`} />
                   )}

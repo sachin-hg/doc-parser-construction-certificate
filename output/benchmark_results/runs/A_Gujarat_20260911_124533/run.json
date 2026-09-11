@@ -1,0 +1,18 @@
+{
+  "run_id": "A_Gujarat_20260911_124533",
+  "variant": "A",
+  "state": "Gujarat",
+  "mode": "batch",
+  "prompt_version": "v4",
+  "created_at": "2026-09-11 12:45:34",
+  "chunks": [
+    {
+      "idx": 1,
+      "status": "complete",
+      "results_file": "chunk_1.jsonl"
+    }
+  ],
+  "skipped_results": [],
+  "results_path": "results.jsonl",
+  "batch_elapsed_s": 167
+}
