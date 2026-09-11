@@ -8,6 +8,7 @@ build/
 
 # Environment — never commit credentials
 .env
+google_creds.json
 
 # Documents — PDFs are large binary assets (2.7 GB); use scripts/download_docs.py
 documents/

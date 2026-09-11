@@ -66,6 +66,10 @@ GOOGLE_CLOUD_QUOTA_PROJECT=your-gcp-project-id
 # ── GCS bucket (batch mode only) ────────────────────────────────────────────
 GCS_BUCKET=rera-benchmark-pdfs
 
+# ── GCP credentials file (optional — skip if using gcloud auth) ─────────────
+# Point to a service account key or shared ADC file in the project root.
+# GOOGLE_APPLICATION_CREDENTIALS=google_creds.json
+
 # ── OpenAI (variants E and F) ───────────────────────────────────────────────
 # OPENAI_API_KEY=your-openai-key
 
@@ -107,18 +111,57 @@ GCS_BUCKET=rera-benchmark-pdfs
 
 ### 3. GCP authentication (Vertex AI only)
 
+**Option A — your own GCP account**
+
 ```bash
 gcloud auth application-default login
 gcloud auth application-default set-quota-project your-gcp-project-id
 ```
 
-#### GCS bucket (batch mode only)
+Then create your own GCS bucket for batch mode:
 
 ```bash
-gcloud storage buckets create gs://rera-benchmark-pdfs \
+gcloud storage buckets create gs://your-bucket-name \
   --project=your-gcp-project-id \
   --location=us-central1
 ```
+
+**Option B — shared credentials (colleague gave you a credentials file)**
+
+Drop the file in the project root as `google_creds.json`, then uncomment in `.env`:
+
+```bash
+GOOGLE_APPLICATION_CREDENTIALS=google_creds.json
+```
+
+No `gcloud` commands needed. The shared credentials can be either:
+- A **service account key** JSON (scoped to specific roles — preferred for sharing)
+- An **ADC file** (`~/.config/gcloud/application_default_credentials.json` from the owner's machine — grants the owner's full GCP access, so only share with trusted collaborators)
+
+To create a scoped service account key to share with others:
+
+```bash
+# Create service account
+gcloud iam service-accounts create rera-benchmark-sa \
+  --display-name="RERA Benchmark" \
+  --project=your-gcp-project-id
+
+# Grant Vertex AI access
+gcloud projects add-iam-policy-binding your-gcp-project-id \
+  --member="serviceAccount:rera-benchmark-sa@your-gcp-project-id.iam.gserviceaccount.com" \
+  --role="roles/aiplatform.user"
+
+# Grant GCS access on the bucket
+gcloud storage buckets add-iam-policy-binding gs://your-bucket-name \
+  --member="serviceAccount:rera-benchmark-sa@your-gcp-project-id.iam.gserviceaccount.com" \
+  --role="roles/storage.objectAdmin"
+
+# Download the key — share this file as google_creds.json
+gcloud iam service-accounts keys create google_creds.json \
+  --iam-account=rera-benchmark-sa@your-gcp-project-id.iam.gserviceaccount.com
+```
+
+`google_creds.json` is in `.gitignore` and will never be committed.
 
 ### 4. Download additional PDFs (optional)
 
