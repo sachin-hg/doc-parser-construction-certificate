@@ -1723,16 +1723,15 @@ def fetch_run(run_id: str, poll_tries: int, poll_interval: int) -> None:
                 line = line.strip()
                 if line:
                     all_results.append(json.loads(line))
-        # Read elapsed from the corresponding job file if available.
-        job_file = chunk_info.get("job_file")
-        if job_file:
-            try:
-                with open(run_dir / job_file) as jf:
-                    jdata = json.load(jf)
-                if jdata.get("batch_elapsed_s"):
-                    elapsed_vals.append(jdata["batch_elapsed_s"])
-            except Exception:
-                pass
+        # Read elapsed from the job file (or chunk_{idx}.json fallback).
+        job_file = chunk_info.get("job_file") or f"chunk_{chunk_info['idx']}.json"
+        try:
+            with open(run_dir / job_file) as jf:
+                jdata = json.load(jf)
+            if jdata.get("batch_elapsed_s"):
+                elapsed_vals.append(jdata["batch_elapsed_s"])
+        except Exception:
+            pass
 
     out_path = run_dir / "results.jsonl"
     with open(out_path, "w") as f:

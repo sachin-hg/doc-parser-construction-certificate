@@ -1,0 +1,18 @@
+{
+  "run_id": "B_Maharashtra_20260911_140751",
+  "variant": "B",
+  "state": "Maharashtra",
+  "mode": "batch",
+  "prompt_version": "v4",
+  "created_at": "2026-09-11 14:07:51",
+  "chunks": [
+    {
+      "idx": 1,
+      "status": "complete",
+      "results_file": "chunk_1.jsonl"
+    }
+  ],
+  "skipped_results": [],
+  "results_path": "results.jsonl",
+  "batch_elapsed_s": 411
+}
