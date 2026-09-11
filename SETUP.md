@@ -4,7 +4,7 @@
 
 ## View existing results (no credentials needed)
 
-The repo includes 780 PDFs and all benchmark run results. To browse everything locally on a fresh Mac:
+The repo includes 936 PDFs and all benchmark run results. To browse everything locally on a fresh Mac:
 
 ```bash
 # 1. Homebrew (skip if already installed)
@@ -122,8 +122,8 @@ gcloud storage buckets create gs://rera-benchmark-pdfs \
 
 ### 4. Download additional PDFs (optional)
 
-The repo includes PDFs for all successfully extracted documents (780 files, 633 MB).
-To download the remaining ~1,600 docs that errored or were never run:
+The repo includes PDFs for all successfully extracted documents (936 files, ~820 MB).
+To download the remaining ~2,100 docs that errored or were never run:
 
 ```bash
 # Download all docs not yet in the repo (~1.1 GB more)
@@ -215,9 +215,9 @@ Only needed to re-run variant A or C (2-call approach). Already present for 471 
 |------|---------|-------|
 | `scripts/`, `pipeline/`, `viewer/src/` | ✅ | All source code |
 | `output/benchmark_results/runs/` | ✅ | Run metadata + JSON extraction results |
-| `documents/` (780 files) | ✅ | PDFs for all successfully extracted docs |
+| `documents/` (936 files) | ✅ | PDFs for all successfully extracted docs |
 | `output/extracted_md/` (471 files) | ✅ | Markdown extractions for 2-call variants |
 | `output/manifest.json` | ✅ | Download URLs for all 3,087 docs |
 | `.env` | ❌ | Credentials — never committed |
 | `.venv/`, `viewer/node_modules/` | ❌ | Installed dependencies |
-| Remaining ~2,300 PDFs | ❌ | Download with `scripts/download_docs.py` |
+| Remaining ~2,100 PDFs | ❌ | Download with `scripts/download_docs.py` |
