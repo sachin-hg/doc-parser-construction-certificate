@@ -809,6 +809,131 @@ def _upload_to_gcs(
     raise RuntimeError(f"GCS upload failed after {max_retries} attempts: {last_exc}")
 
 
+def _batch_backend(call_type: str) -> str:
+    """Return 'vertex' or 'aistudio' for Gemini batch jobs.
+
+    BATCH_BACKEND env var overrides auto-detection:
+      vertex   — Vertex AI + GCS JSONL (uses GCP credits; default for 2-call when configured)
+      aistudio — AI Studio inline InlinedRequests (uses AI Studio quota, free tier)
+
+    Auto: 'vertex' when GEMINI_PROJECT + GCS_BUCKET are both set, else 'aistudio'.
+    """
+    explicit = os.environ.get("BATCH_BACKEND", "").lower()
+    if explicit in ("vertex", "aistudio"):
+        return explicit
+    if os.environ.get("GEMINI_PROJECT") and os.environ.get("GCS_BUCKET"):
+        return "vertex"
+    return "aistudio"
+
+
+def _make_vertex_jsonl_line(
+    doc: dict,
+    call_type: str,
+    prompts: "Prompts",
+    file_uri: Optional[str] = None,
+) -> dict:
+    """One request line for a Vertex AI batch prediction input JSONL file."""
+    if call_type == "2-call":
+        md = Path(doc["md_path"]).read_text(encoding="utf-8", errors="replace")
+        user_parts  = [{"text": prompts.structure_user.format(markdown_content=md)}]
+        system_text = prompts.structure_system
+    else:
+        if not file_uri:
+            raise ValueError(
+                f"GCS file URI required for single-call Vertex batch: {doc['local_path']}"
+            )
+        user_parts  = [
+            {"fileData": {"fileUri": file_uri, "mimeType": "application/pdf"}},
+            {"text": prompts.single_call_user},
+        ]
+        system_text = prompts.single_call_system
+    return {
+        "request": {
+            "contents": [{"role": "user", "parts": user_parts}],
+            "systemInstruction": {"parts": [{"text": system_text}]},
+            "generationConfig": {
+                "temperature": 0,
+                "responseMimeType": "application/json",
+            },
+        }
+    }
+
+
+def _upload_jsonl_to_gcs(lines: list, gcs_bucket: str, blob_name: str) -> str:
+    """Serialize a list of dicts as JSONL and upload to GCS. Returns gs:// URI."""
+    from google.cloud import storage as gcs_storage
+    content    = "\n".join(json.dumps(line) for line in lines)
+    gcs_client = gcs_storage.Client()
+    blob       = gcs_client.bucket(gcs_bucket).blob(blob_name)
+    blob.upload_from_string(content, content_type="application/jsonl")
+    return f"gs://{gcs_bucket}/{blob_name}"
+
+
+def _parse_vertex_gcs_response(resp_dict: dict, result: dict, model: str) -> dict:
+    """Parse a Vertex AI GCS batch output response dict into a result record."""
+    usage = resp_dict.get("usageMetadata", {})
+
+    class _U:
+        prompt_token_count         = usage.get("promptTokenCount")
+        candidates_token_count     = usage.get("candidatesTokenCount")
+        cached_content_token_count = usage.get("cachedContentTokenCount")
+
+    result["input_tokens"]  = _U.prompt_token_count
+    result["output_tokens"] = _U.candidates_token_count
+    result["cached_tokens"] = _U.cached_content_token_count
+    result["cost_usd"]      = _calc_cost_gemini(model, _U(), batch=True)
+
+    candidates = resp_dict.get("candidates", [])
+    if not candidates:
+        raise ValueError("Empty candidates in Vertex AI batch response")
+    text = "".join(
+        p.get("text", "")
+        for p in candidates[0].get("content", {}).get("parts", [])
+    )
+    result["output"]  = json.loads(text)
+    result["success"] = True
+    return result
+
+
+def _collect_vertex_gcs_batch_results(
+    output_gcs_prefix: str,
+    active_docs: list,
+    skipped_results: list,
+    variant: str,
+    model: str,
+    call_type: str,
+) -> list:
+    """Download output JSONL from a Vertex AI GCS batch job and map to result records."""
+    from google.cloud import storage as gcs_storage
+    stripped    = output_gcs_prefix.removeprefix("gs://")
+    bucket_name, _, prefix = stripped.partition("/")
+    gcs_client  = gcs_storage.Client()
+    bucket_obj  = gcs_client.bucket(bucket_name)
+
+    all_lines: list = []
+    for blob in sorted(bucket_obj.list_blobs(prefix=prefix), key=lambda b: b.name):
+        if blob.name.endswith(".jsonl"):
+            all_lines.extend(
+                line for line in blob.download_as_text().splitlines() if line.strip()
+            )
+
+    parsed = [json.loads(line) for line in all_lines]
+
+    results = list(skipped_results)
+    for doc, entry in zip(active_docs, parsed):
+        r = _base_result(doc, variant, model, call_type)
+        if "status" in entry:
+            r["error"] = entry["status"].get("message") or str(entry["status"])
+        else:
+            try:
+                _parse_vertex_gcs_response(entry.get("response", {}), r, model)
+            except Exception as exc:
+                r["error"] = str(exc)
+        print(f"  {'ok' if r.get('success') else 'ERR'}  {r['local_path']}", flush=True)
+        results.append(r)
+    return results
+
+
 def _make_inlined_request(
     doc: dict,
     model: str,
@@ -1162,13 +1287,15 @@ def submit_batch(
 
     model     = VARIANT_MODEL[variant]
     call_type = VARIANT_CALL[variant]
-    # GCS mode: upload PDFs to gs:// and use Vertex AI for batch (uses $300 GCP credits).
-    # Fallback: AI Studio Files API + Batch API (when no GCS_BUCKET or GEMINI_PROJECT).
-    gcs_bucket = os.environ.get("GCS_BUCKET") if os.environ.get("GEMINI_PROJECT") else None
-    if gcs_bucket:
-        client = _make_gemini_client()  # Vertex AI — GCS bypasses Files API limitation
+    # backend: 'vertex' → Vertex AI + GCS JSONL (uses $300 GCP credits, default for 2-call)
+    #          'aistudio' → AI Studio inline InlinedRequests (free tier)
+    # Override with BATCH_BACKEND=vertex|aistudio in .env
+    backend    = _batch_backend(call_type)
+    gcs_bucket = os.environ.get("GCS_BUCKET") if backend == "vertex" else None
+    if backend == "vertex":
+        client = _make_gemini_client()
     else:
-        client = _make_gemini_devapi_client()  # AI Studio — Files API + Batch API
+        client = _make_gemini_devapi_client()
 
     # ── Partition docs ────────────────────────────────────────────────────────
     # For 2-call variants: docs with markdown are sent inline (no upload needed).
@@ -1225,7 +1352,7 @@ def submit_batch(
     if pdf_docs:
         n = len(pdf_docs)
         workers = min(n, 10)
-        if gcs_bucket:
+        if backend == "vertex":
             print(f"  Uploading {n} PDFs to GCS gs://{gcs_bucket} (parallel, {workers} workers)…", flush=True)
         else:
             print(f"  Uploading {n} PDFs to Gemini Files API (parallel, {workers} workers)…", flush=True)
@@ -1262,20 +1389,31 @@ def submit_batch(
         print("  No docs remaining after upload step.")
         return skipped_results
 
-    # ── Build InlinedRequests ─────────────────────────────────────────────────
-    def _request_for(doc):
-        if doc["local_path"] in pdf_fallbacks or call_type == "single":
-            return _make_inlined_request(doc, model, "single", prompts, file_uris.get(doc["local_path"]))
-        return _make_inlined_request(doc, model, "2-call", prompts)
+    # ── Build requests ────────────────────────────────────────────────────────
+    # Vertex AI: build JSONL dicts (uploaded to GCS per chunk).
+    # AI Studio: build InlinedRequest objects (sent inline in the API call).
+    def _doc_call_type(doc):
+        return "single" if doc["local_path"] in pdf_fallbacks or call_type == "single" else "2-call"
 
-    all_requests = [_request_for(d) for d in active_docs]
+    if backend == "vertex":
+        all_requests = [
+            _make_vertex_jsonl_line(d, _doc_call_type(d), prompts, file_uris.get(d["local_path"]))
+            for d in active_docs
+        ]
+    else:
+        all_requests = [
+            _make_inlined_request(d, model, _doc_call_type(d), prompts, file_uris.get(d["local_path"]))
+            for d in active_docs
+        ]
 
-    # ── Chunk size: depends on what's going inline ────────────────────────────
-    # TEXT (A/C 2-call): markdown is embedded inline — 20 MB Gemini payload cap applies.
-    # URI (B/D single-call): only tiny URI strings inline — payload cap not a concern.
-    # Mixed (2-call with PDF fallbacks): some inline markdown → use the tighter limit.
-    has_inline_text = bool(md_docs)
-    chunk_max  = GEMINI_BATCH_MAX_TEXT if has_inline_text else GEMINI_BATCH_MAX_URI
+    # ── Chunk size ────────────────────────────────────────────────────────────
+    # Vertex AI GCS: no inline payload cap — always use the larger limit.
+    # AI Studio inline TEXT (A/C 2-call): 20 MB payload cap applies.
+    # AI Studio inline URI (B/D single-call): only tiny URI strings — cap not a concern.
+    if backend == "vertex":
+        chunk_max = GEMINI_BATCH_MAX_URI
+    else:
+        chunk_max = GEMINI_BATCH_MAX_TEXT if bool(md_docs) else GEMINI_BATCH_MAX_URI
 
     chunks = [
         all_requests[i : i + chunk_max]
@@ -1292,27 +1430,42 @@ def submit_batch(
               f"(chunk_max={chunk_max}).", flush=True)
 
     # ── Submit ALL chunks simultaneously (they run in parallel on Gemini) ─────
-    submitted = []   # (chunk_idx, job, chunk_docs)
+    submitted = []   # (chunk_idx, job, chunk_docs, output_gcs_prefix_or_none)
     for chunk_idx, (chunk_reqs, chunk_docs) in enumerate(zip(chunks, doc_chunks), 1):
         suffix = f" (chunk {chunk_idx}/{n_chunks})" if n_chunks > 1 else ""
         print(f"  Submitting {len(chunk_reqs)} requests{suffix}…", flush=True)
-        job = client.batches.create(model=model, src=chunk_reqs)
-        submitted.append((chunk_idx, job, chunk_docs))
+
+        output_prefix = None
+        if backend == "vertex":
+            # Serialize requests to JSONL, upload to GCS, submit via GCS URI
+            input_blob    = f"batch_inputs/{run_dir.name}/chunk_{chunk_idx}.jsonl"
+            output_prefix = f"gs://{gcs_bucket}/batch_outputs/{run_dir.name}/chunk_{chunk_idx}/"
+            input_uri     = _upload_jsonl_to_gcs(chunk_reqs, gcs_bucket, input_blob)
+            print(f"    JSONL → {input_uri}", flush=True)
+            job = client.batches.create(
+                model=model,
+                src=input_uri,
+                config=types.CreateBatchJobConfig(dest=output_prefix),
+            )
+        else:
+            job = client.batches.create(model=model, src=chunk_reqs)
+
+        submitted.append((chunk_idx, job, chunk_docs, output_prefix))
         print(f"    Job: {job.name}  State: {job.state}", flush=True)
 
     # ── Poll all jobs together ────────────────────────────────────────────────
     for attempt in range(1, poll_tries + 1):
-        pending = [(i, j, d) for i, j, d in submitted if not j.done]
+        pending = [(i, j, d, op) for i, j, d, op in submitted if not j.done]
         if not pending:
             break
         print(f"  Polling attempt {attempt}/{poll_tries}: "
               f"{len(pending)} job(s) running… (waiting {poll_interval}s)", flush=True)
         time.sleep(poll_interval)
         submitted = [
-            (i, client.batches.get(name=j.name) if not j.done else j, d)
-            for i, j, d in submitted
+            (i, client.batches.get(name=j.name) if not j.done else j, d, op)
+            for i, j, d, op in submitted
         ]
-        for i, j, _ in submitted:
+        for i, j, _, _ in submitted:
             if not j.done:
                 print(f"    Chunk {i}: {j.state}", flush=True)
 
@@ -1320,11 +1473,13 @@ def submit_batch(
     all_results = []
     any_pending = False
 
-    for chunk_idx, job, chunk_docs in submitted:
+    for chunk_idx, job, chunk_docs, output_prefix in submitted:
         suffix = f" (chunk {chunk_idx}/{n_chunks})" if n_chunks > 1 else ""
         if not job.done:
             any_pending = True
-            extra = {"vertexai": True, "gcs_bucket": gcs_bucket} if gcs_bucket else None
+            extra = {"vertexai": backend == "vertex", "gcs_bucket": gcs_bucket}
+            if output_prefix:
+                extra["gcs_output_prefix"] = output_prefix
             job_file = _save_chunk_job_file(
                 run_dir, chunk_idx, job.name, variant, model, call_type, state,
                 chunk_docs, provider="gemini", extra=extra,
@@ -1340,7 +1495,12 @@ def submit_batch(
                 all_results.append(r)
         else:
             print(f"\n  Job complete{suffix}. Collecting results…", flush=True)
-            chunk_results = _collect_batch_results(job, chunk_docs, [], variant, model, call_type)
+            if output_prefix:
+                chunk_results = _collect_vertex_gcs_batch_results(
+                    output_prefix, chunk_docs, [], variant, model, call_type
+                )
+            else:
+                chunk_results = _collect_batch_results(job, chunk_docs, [], variant, model, call_type)
             for r in chunk_results:
                 if r.get("local_path") in pdf_fallbacks:
                     r["pdf_fallback"] = True
@@ -1447,6 +1607,11 @@ def _fetch_one_chunk(
         err = getattr(job.error, "message", str(job.error)) if job.error else "unknown"
         raise RuntimeError(f"Gemini batch failed: {job.state} — {err}")
 
+    gcs_output_prefix = info.get("gcs_output_prefix")
+    if gcs_output_prefix:
+        return _collect_vertex_gcs_batch_results(
+            gcs_output_prefix, active_docs, [], variant, model, call_type
+        )
     return _collect_batch_results(job, active_docs, [], variant, model, call_type)
 
 

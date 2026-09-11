@@ -87,6 +87,11 @@ GOOGLE_CLOUD_QUOTA_PROJECT=your-gcp-project-id
 # ── GCS bucket (batch mode only) ─────────────────────────────────────────────
 GCS_BUCKET=rera-benchmark-pdfs
 
+# ── Batch backend (optional) ─────────────────────────────────────────────────
+# vertex   → Vertex AI + GCS JSONL (default for 2-call variants A/C when GEMINI_PROJECT+GCS_BUCKET set)
+# aistudio → AI Studio inline requests (uses AI Studio quota, not GCP credits)
+# BATCH_BACKEND=vertex
+
 # ── OpenAI (required for variants E and F) ───────────────────────────────────
 # OPENAI_API_KEY=your-openai-key
 
