@@ -87,6 +87,10 @@ GOOGLE_CLOUD_QUOTA_PROJECT=your-gcp-project-id
 # ── GCS bucket (batch mode only) ─────────────────────────────────────────────
 GCS_BUCKET=rera-benchmark-pdfs
 
+# ── GCP credentials file (optional — skip if using gcloud auth) ──────────────
+# Drop a service account key or ADC file in the project root as google_creds.json
+# GOOGLE_APPLICATION_CREDENTIALS=google_creds.json
+
 # ── Batch backend (optional) ─────────────────────────────────────────────────
 # vertex   → Vertex AI + GCS JSONL (default for 2-call variants A/C when GEMINI_PROJECT+GCS_BUCKET set)
 # aistudio → AI Studio inline requests (uses AI Studio quota, not GCP credits)

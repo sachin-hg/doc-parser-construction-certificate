@@ -39,7 +39,7 @@ Open **http://localhost:5173** — all benchmark runs, extracted JSON, and sourc
 
 - Python 3.9+
 - Node.js 18+
-- Google Cloud CLI (`gcloud`) — only needed for Vertex AI / batch mode
+- Google Cloud CLI (`gcloud`) — only needed for Vertex AI / batch mode with your own GCP account (not required if using shared credentials)
 
 ### 1. Install dependencies
 
