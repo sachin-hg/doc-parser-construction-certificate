@@ -52,7 +52,7 @@ This script creates `.venv/`, installs `requirements.txt`, runs `npm install` in
 ### 2. Credentials
 
 > [!IMPORTANT]
-> **Got `.env` and `google_creds.json` from Sachin? Drop both files in the project root and skip to [Start the viewer](#start-the-viewer).**
+> **Got `.env` and `google_creds.json` from Sachin? Drop both files in the project root and skip to [4. Download additional PDFs](#4-download-additional-pdfs-optional).**
 
 Edit the `.env` file created by `install.sh`:
 
