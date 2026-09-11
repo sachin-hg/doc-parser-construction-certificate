@@ -212,7 +212,7 @@ If the default ports are already in use, override them with env vars:
 PORT=8766 .venv/bin/python viewer_server.py
 
 # Viewer on a different port, pointing at the API on 8766
-cd viewer && VITE_PORT=5174 VITE_API_PORT=8766 npx vite
+cd viewer && VITE_PORT=5174 VITE_API_PORT=8766 npm run dev
 ```
 
 ---
