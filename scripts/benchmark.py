@@ -788,7 +788,7 @@ def _upload_to_gcs(
 ) -> str:
     """Upload PDF to GCS and return gs:// URI. Uses ADC — works with Vertex AI."""
     from google.cloud import storage as gcs_storage
-    gcs_client = gcs_storage.Client()
+    gcs_client = gcs_storage.Client(project=os.environ.get("GEMINI_PROJECT"))
     bucket   = gcs_client.bucket(bucket_name)
     blob_name = doc["local_path"].lstrip("/")
     blob      = bucket.blob(blob_name)
@@ -864,7 +864,7 @@ def _upload_jsonl_to_gcs(lines: list, gcs_bucket: str, blob_name: str) -> str:
     """Serialize a list of dicts as JSONL and upload to GCS. Returns gs:// URI."""
     from google.cloud import storage as gcs_storage
     content    = "\n".join(json.dumps(line) for line in lines)
-    gcs_client = gcs_storage.Client()
+    gcs_client = gcs_storage.Client(project=os.environ.get("GEMINI_PROJECT"))
     blob       = gcs_client.bucket(gcs_bucket).blob(blob_name)
     blob.upload_from_string(content, content_type="application/jsonl")
     return f"gs://{gcs_bucket}/{blob_name}"
