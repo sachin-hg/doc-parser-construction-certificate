@@ -51,6 +51,8 @@ This script creates `.venv/`, installs `requirements.txt`, runs `npm install` in
 
 ### 2. Credentials
 
+> **Got `.env` and `google_creds.json` from Sachin? Drop them in the project root and skip to [Start the viewer](#start-the-viewer).**
+
 Edit the `.env` file created by `install.sh`:
 
 ```bash
@@ -110,6 +112,8 @@ GCS_BUCKET=rera-benchmark-pdfs
 1. Go to openrouter.ai → Keys → Create a key
 
 ### 3. GCP authentication (Vertex AI only)
+
+> **Got `.env` and `google_creds.json` from Sachin? Skip this section entirely.**
 
 **Option A — your own GCP account**
 
