@@ -244,8 +244,8 @@ def _read_run_docs(run_dir: Path, manifest: dict) -> list:
                 try:
                     with open(jf) as f:
                         job = json.load(f)
-                    for doc_entry in job.get("docs", []):
-                        add(doc_entry["local_path"], doc_entry.get("rera_id"), "pending")
+                    for p in job.get("active_paths", []):
+                        add(p, None, "pending")
                 except Exception:
                     pass
 
