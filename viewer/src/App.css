@@ -1120,12 +1120,16 @@ button { cursor: pointer; }
 .run-status--pending  { background: var(--badge-warn-bg);   color: var(--badge-warn-text); }
 .run-status--partial  { background: var(--badge-warn-bg);   color: var(--badge-warn-text); }
 .run-status--error    { background: #fce4ec; color: #c62828; }
+.run-status--failed   { background: #fce4ec; color: #c62828; }
 
 @media (prefers-color-scheme: dark) {
-  .run-status--error { background: #3b1217; color: #ef9a9a; }
+  .run-status--error  { background: #3b1217; color: #ef9a9a; }
+  .run-status--failed { background: #3b1217; color: #ef9a9a; }
 }
-:root[data-theme="dark"]  .run-status--error { background: #3b1217; color: #ef9a9a; }
-:root[data-theme="light"] .run-status--error { background: #fce4ec; color: #c62828; }
+:root[data-theme="dark"]  .run-status--error  { background: #3b1217; color: #ef9a9a; }
+:root[data-theme="dark"]  .run-status--failed { background: #3b1217; color: #ef9a9a; }
+:root[data-theme="light"] .run-status--error  { background: #fce4ec; color: #c62828; }
+:root[data-theme="light"] .run-status--failed { background: #fce4ec; color: #c62828; }
 
 /* ─── Back button (inline variant for non-split pages) ───────────────────────── */
 .back-btn-inline {

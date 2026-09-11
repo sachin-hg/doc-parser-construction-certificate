@@ -144,9 +144,15 @@ def _get_ran_paths() -> set:
     return ran
 
 
-def _run_status(manifest: dict, run_id: str) -> str:
+def _run_status(manifest: dict, run_id: str, run_dir=None) -> str:
     """Derive a human-readable status from a run manifest."""
     if manifest.get("results_path"):
+        # Verify the results file actually has content — an empty file means the
+        # run crashed before writing anything (e.g. batch submission error).
+        if run_dir is not None:
+            rfile = run_dir / manifest["results_path"]
+            if rfile.exists() and rfile.stat().st_size == 0 and not manifest.get("chunks"):
+                return "failed"
         return "complete"
     mode = manifest.get("mode", "async")
     if mode == "async":
@@ -486,7 +492,7 @@ class Handler(BaseHTTPRequestHandler):
             except Exception:
                 continue
             run_id = m.get("run_id", run_dir.name)
-            status = _run_status(m, run_id)
+            status = _run_status(m, run_id, run_dir)
             chunks = m.get("chunks", [])
             runs.append({
                 "run_id":            run_id,
@@ -517,7 +523,7 @@ class Handler(BaseHTTPRequestHandler):
             self._json(500, {"error": str(e)})
             return
 
-        status = _run_status(manifest, run_id)
+        status = _run_status(manifest, run_id, run_dir)
         chunks = manifest.get("chunks", [])
         docs   = _read_run_docs(run_dir, manifest)
 
